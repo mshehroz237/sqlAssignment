@@ -42,6 +42,7 @@ function prompts() {
                 addEmployee();
             }
             if (answers.prompts === 'update an employee role') {
+              updateEmployeeRole();
             }
         })
 
@@ -235,6 +236,7 @@ const updateEmployeeRole = () => {
       });
 
 
+    }
 
 prompts();
 
