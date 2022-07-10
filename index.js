@@ -184,7 +184,7 @@ function addEmployee(){
 
 const updateEmployeeRole = () => {
     let sql = `SELECT id, first_name, last_name, role_id AS "role.id", FROM employee`;
-    db.promise().query(sql, (error, response) => {
+    db.query(sql, (error, response) => {
       if (error) throw error;
       let employeeNamesArray = [];
       response.forEach((employee) => {employeeNamesArray.push(`${first_name} ,${last_name}`);});
