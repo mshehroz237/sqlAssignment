@@ -79,25 +79,34 @@ function viewEmployees(){
 }
 
 function addDepartment(){
-        inquirer.prompt({
-            type: 'input',
-            name: 'name',
-            message: 'what should be the name of your department'
-        })
-        .then(answers=>{
-            const params = [answers.name];
-            console.log(answers.name);
-            const sql = `INSERT INTO department(name)
-            VALUES('shehroz');`
-            db.query(sql,(err, rows)=>{
-                if(err){
-                    throw err;
-                }
-                console.table(rows.affectedRows);
-            })
-        })
-    }
 
+inquirer.prompt({
+    type: 'input',
+    name: 'name',
+    message: 'what should be the name of your department'
+})
+.then(answers=>{
+    const params = [answers.name];
+    console.log(answers.name);
+    const sql = `INSERT INTO department(name)
+    VALUES('shehroz');`
+    db.query(sql,(err, rows)=>{
+        if(err){
+            throw err;
+        }
+        console.table(rows.affectedRows);
+    })
+}).then(rows => {
+   if (rows.affectedRows) {
+      const sql = 'select * from department'
+      db.query(sql, (err, rows) =>{
+
+      }
+ } else {
+      console.log("there was a problem adding that department")
+ }
+})
+}
 
 prompts();
 
