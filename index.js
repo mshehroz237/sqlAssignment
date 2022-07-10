@@ -186,20 +186,14 @@ const updateEmployeeRole = () => {
     db.promise().query(sql, (error, response) => {
       if (error) throw error;
       let employeeNamesArray = [];
-      response.forEach((employee) => {employeeNamesArray.push(`${first_name} ${last_name}`);});
-
-      let sql =     `SELECT id, title FROM role`;
-      connection.promise().query(sql, (error, response) => {
-        if (error) throw error;
-        let rolesArray = [];
-        response.forEach((role) => {rolesArray.push(title);});
+      response.forEach((employee) => {employeeNamesArray.push(`${first_name} ,${last_name}`);});
 
         inquirer
           .prompt([
             {
               name: 'chosenEmployee',
               type: 'list',
-              message: 'Which employee has a new role?',
+              message: 'All the employees',
               choices: employeeNamesArray
             },
             {
@@ -239,8 +233,7 @@ const updateEmployeeRole = () => {
             );
           });
       });
-    });
-  };
+
 
 
 prompts();
