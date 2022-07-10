@@ -89,24 +89,20 @@ inquirer.prompt({
     const params = [answers.name];
     console.log(answers.name);
     const sql = `INSERT INTO department(name)
-    VALUES('shehroz');`
+    VALUES('shehroz')
+    SELECT * FROM description;`
     db.query(sql,(err, rows)=>{
         if(err){
             throw err;
         }
-        console.table(rows.affectedRows);
+        console.log(rows.affectedRows);
     })
 }).then(rows => {
-   if (rows.affectedRows) {
-      const sql = 'select * from department'
-      db.query(sql, (err, rows) =>{
+    const sql = 'select * from department'
+    db.query(sql, (err, rows) =>{
+    
+    })
 
-      }
- } else {
-      console.log("there was a problem adding that department")
- }
-})
-}
 
 prompts();
 
