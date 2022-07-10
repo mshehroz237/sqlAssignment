@@ -33,6 +33,7 @@ function prompts() {
                 viewEmployees();
             }
             if (answers.prompts === 'add a department') {
+                addDepartment();
             }
             if (answers.prompts === 'add a role') {
             }
@@ -66,7 +67,7 @@ function viewRoles(){
 
 }
 function viewEmployees(){
-    const sql = `SELECT * FROM employee`;
+    const sql = `SELECT employee.id,employee.first_name, employee.last_name, manager.first_name AS manager FROM employee LEFT JOIN employee manager ON manager.id = employee.manager_id `;
     db.query(sql, (err, rows)=>{
         if(err){
             throw err;
@@ -77,5 +78,26 @@ function viewEmployees(){
 
 }
 
+function addDepartment(){
+        inquirer.prompt({
+            type: 'input',
+            name: 'name',
+            message: 'what should be the name of your department'
+        })
+        .then(answers=>{
+            const params = [answers.name];
+            console.log(answers.name);
+            const sql = `INSERT INTO department(name)
+            VALUES('shehroz');`
+            db.query(sql,(err, rows)=>{
+                if(err){
+                    throw err;
+                }
+                console.table(rows.affectedRows);
+            })
+        })
+    }
+
 
 prompts();
+
