@@ -39,6 +39,7 @@ function prompts() {
                 addRole();
             }
             if (answers.prompts === 'add an employee') {
+                addEmployee();
             }
             if (answers.prompts === 'update an employee role') {
             }
@@ -88,7 +89,7 @@ inquirer.prompt({
 .then(answers=>{
     const params = [answers.name];
     const sql = `INSERT INTO department(name)
-    VALUES(${params})
+    VALUES("${params}")
     `
     db.query(sql,(err, rows)=>{
         if(err){
@@ -103,48 +104,6 @@ inquirer.prompt({
     })
 })
 };
-
-// function addRole(){
-
-//     inquirer.prompt({
-//         type: 'input',
-//         name: 'myname',
-//         message: 'what is your name'
-//     },
-// {
-//         type: 'input',
-//         name: 'mysalary',
-//         message: 'what should be salary'
-// },
-// {
-//         type: 'input',
-//         name: 'mydepartment',
-//         message: 'what should be the name of your department'
-
-
-//     }).then(answers=>{
-//         const params = [answers.myname, answers.mysalary, answers.mydepartment];
-//         console.log(answers.name);
-//         const sql = `INSERT INTO role(title,salary,department_id)
-//         VALUES('${params[0],params[1],params[2]}')
-//         `
-//         db.query(sql,(err, rows)=>{
-//             if(err){
-//                 throw err;
-//             }
-//             console.log(rows.affectedRows);
-//         })
-//     }).then(rows => {
-//         const sql = 'select * from role'
-//         db.query(sql, (err, rows) =>{
-//         console.table(rows);
-//         })
-//     })
-//     }
-
-
-
-
 
 function addRole(){
     inquirer
@@ -166,22 +125,123 @@ function addRole(){
   ])
   .then(answers => {
     const params = [answers.name,answers.salary,answers.department];
-    console.log(params[0],params[1],params[2]);
-    const sql = `INSTERT INTO role(title, salary, department_id)
-    VALUES(${params[0],params[1],params[2]})`
+    const sql = `INSERT INTO role(title, salary, department_id)
+    VALUES("${params[0]}",${params[1]},${params[2]})`
     db.query(sql,(err,rows)=>{
         if(err){
             throw err;
         }
         console.log(rows.affectedRows);
-    }).then(rows=>{
         const sql = `SELECT * FROM role`
         db.query(sql,(err,rows)=>{
-            console.table(rows);
+        console.table(rows);
         })
     })
   });
 }
+
+
+function addEmployee(){
+    inquirer
+  .prompt([
+    {
+      name: 'firstname',
+      type : 'input',
+      message: 'What is the first name?',
+    },
+    {
+      name: 'lastname',
+      type: 'input',
+      message: 'What is the last name?',
+    },    {
+        name: 'role',
+        type : 'input',
+        message: 'What is the role?',
+      },
+      {
+        name: 'manager',
+        type : 'input',
+        message: 'Who is the manager?',
+      }
+  ])
+  .then(answers => {
+    const params = [answers.firstname,answers.lastname,answers.role,answers.manager];
+    const sql = `INSERT INTO employee(first_name, last_name, role_id, manager_id)
+    VALUES("${params[0]}","${params[1]}","${params[2]}","${params[3]}")`
+    db.query(sql,(err,rows)=>{
+        if(err){
+            throw err;
+        }
+        console.log(rows.affectedRows);
+        const sql = `SELECT * FROM employee`
+        db.query(sql,(err,rows)=>{
+        console.table(rows);
+        })
+    })
+  });
+}
+
+const updateEmployeeRole = () => {
+    let sql = `SELECT id, first_name, last_name, role_id AS "role.id", FROM employee`;
+    db.promise().query(sql, (error, response) => {
+      if (error) throw error;
+      let employeeNamesArray = [];
+      response.forEach((employee) => {employeeNamesArray.push(`${first_name} ${last_name}`);});
+
+      let sql =     `SELECT id, title FROM role`;
+      connection.promise().query(sql, (error, response) => {
+        if (error) throw error;
+        let rolesArray = [];
+        response.forEach((role) => {rolesArray.push(title);});
+
+        inquirer
+          .prompt([
+            {
+              name: 'chosenEmployee',
+              type: 'list',
+              message: 'Which employee has a new role?',
+              choices: employeeNamesArray
+            },
+            {
+              name: 'chosenRole',
+              type: 'list',
+              message: 'What is their new role?',
+              choices: rolesArray
+            }
+          ])
+          .then((answer) => {
+            let newTitleId, employeeId;
+
+            response.forEach((role) => {
+              if (answer.chosenRole === title) {
+                newTitleId = id;
+              }
+            });
+
+            response.forEach((employee) => {
+              if (
+                answer.chosenEmployee ===
+                `${first_name} ${last_name}`
+              ) {
+                employeeId = id;
+              }
+            });
+
+            let sqls =    `UPDATE employee SET role_id = ? WHERE id = ?`;
+            db.query(
+              sqls,
+              [newTitleId, employeeId],
+              (error) => {
+                if (error) throw error;
+                console.log(chalk.greenBright(`Employee Role Updated`));
+                promptUser();
+              }
+            );
+          });
+      });
+    });
+  };
+
 
 prompts();
 
