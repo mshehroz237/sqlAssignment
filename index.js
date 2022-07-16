@@ -55,29 +55,32 @@ function viewDepartments() {
       throw err;
     }
     console.table(rows);
+    prompts();
   })
-  prompts();
 }
+
 function viewRoles() {
-  const sql = `SELECT * FROM roles`;
+  const sql = `SELECT role.id,role.title,role.salary,department.name AS department FROM role LEFT JOIN department ON department_id = department.id`;
   db.query(sql, (err, rows) => {
     if (err) {
       throw err;
     }
     console.table(rows);
+    prompts();
   })
-  prompts();
 
 }
+
 function viewEmployees() {
-  const sql = `SELECT employee.id,employee.first_name, employee.last_name, manager.first_name AS manager FROM employee LEFT JOIN employee manager ON manager.id = employee.manager_id `;
+  const sql = `SELECT employee.id,employee.first_name, employee.last_name, role.title AS title, department.name AS department, manager.first_name AS manager FROM employee LEFT JOIN employee manager ON manager.id = employee.manager_id LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id `;
   db.query(sql, (err, rows) => {
     if (err) {
       throw err;
     }
     console.table(rows);
+    prompts();
+
   })
-  prompts();
 
 }
 
@@ -98,15 +101,14 @@ function addDepartment() {
         }
         console.log(rows.affectedRows);
       })
-    }).then(rows => {
-      const sql = 'select * from department'
-      db.query(sql, (err, rows) => {
-        console.table(rows);
-      })
+    console.log('successfully added')
+    prompts();
     })
 };
 
 function addRole() {
+  const choices = [];
+  
   inquirer
     .prompt([
       {
