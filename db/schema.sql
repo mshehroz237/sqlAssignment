@@ -1,9 +1,9 @@
-//creating a table department
+-- //creating a table department
 CREATE TABLE department(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );
-//creating a table role
+-- //creating a table role
 CREATE TABLE role(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE role(
     department_id INTEGER,
     FOREIGN KEY (department_id) REFERENCES department(id)
 );
-//creating a table employee
+-- //creating a table employee
 CREATE TABLE employee(
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
