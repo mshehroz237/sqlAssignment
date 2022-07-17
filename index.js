@@ -1,11 +1,12 @@
+//getting inquirer
 var inquirer = require('inquirer');
-
+//using c table
 const cTable = require('console.table');
-
+//getting mysql
 const mysql = require('mysql2');
-
+//using db to estalish connection
 const db = require('./db/connection');
-
+//run basic prompts
 function prompts() {
   inquirer.prompt({
     type: 'list',
@@ -22,6 +23,7 @@ function prompts() {
 
     ]
   })
+  //call functions based on the responses
     .then(answers => {
       if (answers.prompts === 'view all departments') {
         viewDepartments();
@@ -47,7 +49,7 @@ function prompts() {
     })
 
 }
-
+//shows all the departments
 function viewDepartments() {
   const sql = `SELECT * FROM department`;
   db.query(sql, (err, rows) => {
@@ -58,7 +60,7 @@ function viewDepartments() {
     prompts();
   })
 }
-
+//lets to view roles and added left joins for department_id which will return the department
 function viewRoles() {
   const sql = `SELECT role.id,role.title,role.salary,department.name AS department FROM role LEFT JOIN department ON department_id = department.id`;
   db.query(sql, (err, rows) => {
@@ -70,7 +72,7 @@ function viewRoles() {
   })
 
 }
-
+//left joining title department and manager
 function viewEmployees() {
   const sql = `SELECT employee.id,employee.first_name, employee.last_name, role.title AS title, department.name AS department, manager.first_name AS manager FROM employee LEFT JOIN employee manager ON manager.id = employee.manager_id LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id `;
   db.query(sql, (err, rows) => {
@@ -83,7 +85,7 @@ function viewEmployees() {
   })
 
 }
-
+//inserting a new department into databse
 function addDepartment() {
   inquirer.prompt({
     type: 'input',
@@ -105,9 +107,8 @@ function addDepartment() {
     prompts();
     })
 };
-
+//getting name salary and department integer and left joining it with the title
 function addRole() {
-  const choices = [];
 
   inquirer
     .prompt([
@@ -134,7 +135,7 @@ function addRole() {
     FROM role
     LEFT JOIN department
     ON department_id = department.id;`
-      db.query(sql,sql2, (err, rows) => {
+      db.query(sql, (err, rows) => {
         if (err) {
           throw err;
         }
@@ -143,11 +144,18 @@ function addRole() {
         db.query(sql, (err, rows) => {
           console.table(rows);
         })
+        db.query(sql2, (err, rows) => {
+          if (err) {
+            throw err;
+          }
+          console.table(rows);
+        })
       })
     });
 }
 
-
+//getting the first name,last name, role integer, and maanager ineteger
+//performing left joins and displaying role title and managers name
 function addEmployee() {
   inquirer
     .prompt([
@@ -175,6 +183,11 @@ function addEmployee() {
       const params = [answers.firstname, answers.lastname, answers.role, answers.manager];
       const sql = `INSERT INTO employee(first_name, last_name, role_id, manager_id)
     VALUES("${params[0]}","${params[1]}","${params[2]}","${params[3]}")`
+    const sql2 = `SELECT employee.role_id, role.title
+    FROM employee
+    LEFT JOIN role
+    ON role_id = role.id`
+    const sql3 = `manager.first_name AS manager FROM employee LEFT JOIN employee manager ON manager.id = employee.manager_id`
       db.query(sql, (err, rows) => {
         if (err) {
           throw err;
@@ -184,10 +197,16 @@ function addEmployee() {
         db.query(sql, (err, rows) => {
           console.table(rows);
         })
+        db.query(sql2,(err,rows)=>{
+          if(err){
+            throw err;
+          }
+          console.table(rows);
+        })
       })
     });
 }
-
+//getting all the employees and updating their roles
 function updateEmployeeRole() {
   let sql = `SELECT id, first_name, last_name, role_id AS "role.id" FROM employee`;
   db.query(sql, (err, rows) => {
