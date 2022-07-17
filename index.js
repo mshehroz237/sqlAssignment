@@ -108,7 +108,7 @@ function addDepartment() {
 
 function addRole() {
   const choices = [];
-  
+
   inquirer
     .prompt([
       {
@@ -128,7 +128,7 @@ function addRole() {
     ])
     .then(answers => {
       const params = [answers.name, answers.salary, answers.department];
-      const sql = `INSERT INTO role(title, salary, department_id)
+      const sql = `INSERT INTO role(name, salary,department_id)
     VALUES("${params[0]}",${params[1]},${params[2]})`
       db.query(sql, (err, rows) => {
         if (err) {
