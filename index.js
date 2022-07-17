@@ -128,7 +128,11 @@ function addRole() {
     ])
     .then(answers => {
       const params = [answers.name, answers.salary, answers.department];
-      const sql = `INSERT INTO role(name, salary,department_id)
+      const sql = `INSERT INTO role(title, salary,department_id)
+      SELECT role.department_id, department.name
+      FROM role
+      LEFT JOIN department
+      ON role.department_id = department.name;
     VALUES("${params[0]}",${params[1]},${params[2]})`
       db.query(sql, (err, rows) => {
         if (err) {
